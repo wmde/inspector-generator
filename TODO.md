@@ -5,6 +5,7 @@
   	- Classes
  	- Nullable types
 - [ ] Iterate over all properties
+- [ ] Test with inherted properties
 - [ ] Expand README
    - When to use
    - Generating classes

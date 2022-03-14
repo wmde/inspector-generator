@@ -67,6 +67,8 @@ class SpyGenerator
 		$this->createAccessor($spyClass, $prop);
 		$prop = $reflectedClass->getProperty('amount');
 		$this->createAccessor($spyClass, $prop);
+		$prop = $reflectedClass->getProperty('comment');
+		$this->createAccessor($spyClass, $prop);
 	}
 
 	private function createGetValueMethod(ClassType $spyClass): void
@@ -108,6 +110,7 @@ class SpyGenerator
 			$typeAssertion = match ($propertyType->getName()) {
 				'bool' => 'is_bool($value)',
 				'int' => 'is_int($value)',
+				'string' => 'is_string($value)',
 				default => null
 			};
 			// TODO remove when all internal types are implemented

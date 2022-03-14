@@ -13,34 +13,27 @@ use Wmde\SpyGenerator\Tests\Classes\Order;
  */
 class SpyGeneratorTest extends TestCase
 {
-	public function test_it_provides_access_to_boolean_properties(): void
-    {
+	public function test_it_generates_class(): void
+	{
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
 
-		$spyClassCode = $generator->generateSpy(Order::class, 'BooleanOrderSpy');
-		file_put_contents(
-			__DIR__ . '/../Generated/BooleanOrderSpy.php',
-			"<?php\ndeclare(strict_types=1);\n\n" . $spyClassCode
-		);
-		require_once __DIR__ . '/../Generated/BooleanOrderSpy.php';
-		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\BooleanOrderSpy($this->newOrderFixture());
+		$code = $generator->generateSpy(Order::class, 'OrderSpy');
 
-		$this->assertTrue($spyClass->getFulfilled());
+		$fileName = __DIR__ . "/../Generated/OrderSpy.php";
+		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
+		require $fileName;
+
+		$this->assertTrue(class_exists('Wmde\SpyGenerator\Tests\Generated\OrderSpy', true));
 	}
 
-	public function test_it_provides_access_to_integer_properties(): void
+
+	public function test_generated_class_provides_access_to_properties(): void
     {
-		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
+		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\OrderSpy($this->newOrderFixture());
 
-		$spyClassCode = $generator->generateSpy(Order::class, 'IntegerOrderSpy');
-		file_put_contents(
-			__DIR__ . '/../Generated/IntegerOrderSpy.php',
-			"<?php\ndeclare(strict_types=1);\n\n" . $spyClassCode
-		);
-		require_once __DIR__ . '/../Generated/IntegerOrderSpy.php';
-		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\IntegerOrderSpy($this->newOrderFixture());
-
+		$this->assertTrue($spyClass->getFulfilled());
 		$this->assertSame(1000, $spyClass->getAmount());
+		$this->assertSame('Fulfilled by Joe', $spyClass->getComment());
 	}
 
 	private function newOrderFixture(): Order
