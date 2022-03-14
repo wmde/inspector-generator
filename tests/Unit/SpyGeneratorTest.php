@@ -27,6 +27,9 @@ class SpyGeneratorTest extends TestCase
 	}
 
 
+	/**
+	 * @depends test_it_generates_class
+	 */
 	public function test_generated_class_provides_access_to_properties(): void
     {
 		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\OrderSpy($this->newOrderFixture());
@@ -39,6 +42,9 @@ class SpyGeneratorTest extends TestCase
 		$this->assertNotNull($spyClass->getPrevious());
 	}
 
+	/**
+	 * @depends test_it_generates_class
+	 */
 	public function test_generated_class_provides_access_to_nullable_properties(): void
     {
 		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\OrderSpy($this->newSingularOrderFixture());
