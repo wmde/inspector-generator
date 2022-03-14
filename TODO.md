@@ -5,7 +5,6 @@
   	- Classes
  	- Nullable types
 - [ ] Iterate over all properties
-- [ ] Add coding style
 - [ ] Expand README
    - When to use
    - Generating classes
@@ -15,6 +14,7 @@
 - Add CI with GitHub Actions
 - Allow partial spies (only specify needed properties)
 - Add configurable code comments to file header
+- Allow custom printers
 - Configure with YAML
 - Create PHAR executable release
 - Use phive instead of composer

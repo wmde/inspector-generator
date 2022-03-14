@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Wmde\SpyGenerator\Tests\Classes;
@@ -6,7 +7,8 @@ namespace Wmde\SpyGenerator\Tests\Classes;
 /**
  * This is an example class of a "write-only" entity that has state changes, but does not expose its properties.
  */
-class Order {
+class Order
+{
 	private bool $fulfilled;
 	private int $amount;
 	/**
@@ -19,8 +21,7 @@ class Order {
 
 	public function __construct(
 		private string $id
-	)
-	{
+	) {
 		$this->fulfilled = false;
 		$this->comment = '';
 		$this->amount = 0;
@@ -28,17 +29,20 @@ class Order {
 		$this->items = [];
 	}
 
-	public function addItem( string $name, int $amount ): void {
+	public function addItem(string $name, int $amount): void
+    {
 		$this->items[] = $name;
 		$this->amount += $amount;
 	}
 
-	public function applyRebate( float $rebate ): void {
+	public function applyRebate(float $rebate): void
+    {
 		$this->rebate = $rebate;
 	}
 
-	public function fulfill( string $comment = '', ?Order $previous = null): void {
-		if ( $this->fulfilled ) {
+	public function fulfill(string $comment = '', ?Order $previous = null): void
+    {
+		if ($this->fulfilled) {
 			throw new \LogicException('Order is already fulfilled!');
 		}
 		$this->fulfilled = true;
@@ -46,7 +50,8 @@ class Order {
 		$this->previous = $previous;
 	}
 
-	public function duplicate(): self {
+	public function duplicate(): self
+    {
 		$order = new self($this->id);
 		$order->fulfilled = $this->fulfilled;
 		$order->comment = $this->comment;
