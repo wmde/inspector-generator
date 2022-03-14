@@ -2,7 +2,8 @@
     "name": "wmde/spy-generator",
     "description": "Code generation tool for private class inspection",
     "require": {
-        "nette/php-generator": "^4.0"
+        "nette/php-generator": "^4.0",
+        "phpdocumentor/reflection-docblock": "^5.3"
     },
     "license": "MIT",
     "autoload": {

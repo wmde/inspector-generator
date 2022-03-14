@@ -7,8 +7,10 @@ namespace Wmde\SpyGenerator;
 use LogicException;
 use Nette\NotImplementedException;
 use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpNamespace;
 use Nette\PhpGenerator\PsrPrinter;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
@@ -71,6 +73,8 @@ class SpyGenerator
 		$this->createAccessor($spyClass, $prop);
 		$prop = $reflectedClass->getProperty('rebate');
 		$this->createAccessor($spyClass, $prop);
+		$prop = $reflectedClass->getProperty('items');
+		$this->createAccessor($spyClass, $prop);
 	}
 
 	private function createGetValueMethod(ClassType $spyClass): void
@@ -99,6 +103,7 @@ class SpyGenerator
 				 ->addBody("assert($typeAssertion);")
 				 ->addBody('return $value;');
 		}
+		$this->addTypeHintForAccessor($accessorMethod, $prop);
 	}
 
 	/**
@@ -118,9 +123,41 @@ class SpyGenerator
 				'int' => 'is_int($value)',
 				'string' => 'is_string($value)',
 				'float' => 'is_float($value)',
+				'array' => 'is_array($value)',
 				default => ''
 			};
 		}
 		return [ $propertyType->getName(), $typeAssertion ];
+	}
+
+	public function addTypeHintForAccessor(Method $method, ReflectionProperty $prop): void
+    {
+		$propertyType = $prop->getType();
+		if (!($propertyType instanceof ReflectionNamedType) || $propertyType->getName() !== 'array') {
+			return;
+		}
+		$docComment = $prop->getDocComment();
+		if (empty($docComment)) {
+			return;
+		}
+
+		$factory  = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
+		$docBlock = $factory->create($docComment);
+		$tags = $docBlock->getTagsByName('var');
+		if (count($tags) === 0) {
+			return;
+		}
+		$tag = $tags[0];
+		// type check to make PHPStan happy
+		if (!($tag instanceof Var_)) {
+			return;
+		}
+		// empty check to make Psalm happy
+		$typeName = $tag->getType();
+		if (!$typeName) {
+			return;
+		}
+		$method->setComment('@psalm-suppress MixedReturnTypeCoercion')
+			->addComment('@return ' .	$typeName);
 	}
 }

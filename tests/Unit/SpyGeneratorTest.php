@@ -35,6 +35,7 @@ class SpyGeneratorTest extends TestCase
 		$this->assertSame(1000, $spyClass->getAmount());
 		$this->assertSame('Fulfilled by Joe', $spyClass->getComment());
 		$this->assertSame(0.2, $spyClass->getRebate());
+		$this->assertSame(['Test item'], $spyClass->getItems());
 	}
 
 	private function newOrderFixture(): Order
