@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Wmde\SpyGenerator;
 
+use LogicException;
+use Nette\NotImplementedException;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 use Nette\PhpGenerator\PsrPrinter;
@@ -63,6 +65,8 @@ class SpyGenerator
 		// TODO use loop
 		$prop = $reflectedClass->getProperty('fulfilled');
 		$this->createAccessor($spyClass, $prop);
+		$prop = $reflectedClass->getProperty('amount');
+		$this->createAccessor($spyClass, $prop);
 	}
 
 	private function createGetValueMethod(ClassType $spyClass): void
@@ -98,10 +102,19 @@ class SpyGenerator
 		if (!($propertyType instanceof ReflectionNamedType)) {
 			return ['mixed', ''];
 		}
-		return [
-			$propertyType->getName(),
-			 // TODO make dynamic, based on $prop->getType
-			'is_bool($value)'
-		];
+		$typeAssertion = '';
+		// TODO $propertyType->allowsNull check here
+		if ($propertyType->isBuiltin()) {
+			$typeAssertion = match ($propertyType->getName()) {
+				'bool' => 'is_bool($value)',
+				'int' => 'is_int($value)',
+				default => null
+			};
+			// TODO remove when all internal types are implemented
+			if (is_null($typeAssertion)) {
+				throw new NotImplementedException("Not implemented");
+			}
+		}
+		return [ $propertyType->getName(), $typeAssertion ];
 	}
 }

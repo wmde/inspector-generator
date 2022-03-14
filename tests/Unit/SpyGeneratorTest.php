@@ -28,6 +28,21 @@ class SpyGeneratorTest extends TestCase
 		$this->assertTrue($spyClass->getFulfilled());
 	}
 
+	public function test_it_provides_access_to_integer_properties(): void
+    {
+		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
+
+		$spyClassCode = $generator->generateSpy(Order::class, 'IntegerOrderSpy');
+		file_put_contents(
+			__DIR__ . '/../Generated/IntegerOrderSpy.php',
+			"<?php\ndeclare(strict_types=1);\n\n" . $spyClassCode
+		);
+		require_once __DIR__ . '/../Generated/IntegerOrderSpy.php';
+		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\IntegerOrderSpy($this->newOrderFixture());
+
+		$this->assertSame(1000, $spyClass->getAmount());
+	}
+
 	private function newOrderFixture(): Order
     {
 		$order = new Order('1');
