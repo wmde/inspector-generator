@@ -105,9 +105,12 @@ class SpyGenerator
 	private function getAccessorType(ReflectionProperty $prop): array
     {
 		$propertyType = $prop->getType();
-		// TODO $propertyType->allowsNull check here
 		if (!($propertyType instanceof ReflectionNamedType)) {
 			return ['mixed', ''];
+		}
+		$returnType = $propertyType->getName();
+		if ($propertyType->allowsNull()) {
+			$returnType = "?$returnType";
 		}
 		if ($propertyType->isBuiltin()) {
 			$typeAssertion = match ($propertyType->getName()) {
@@ -118,10 +121,15 @@ class SpyGenerator
 				'array' => 'is_array($value)',
 				default => ''
 			};
-			return [ $propertyType->getName(), $typeAssertion ];
+			return [ $returnType, $typeAssertion ];
 		}
 
-		return [ $propertyType->getName(), '$value instanceof \\' . $propertyType->getName() ];
+		$typeAssertion =  '$value instanceof \\' . $propertyType->getName();
+		if ($propertyType->allowsNull()) {
+			$typeAssertion = "is_null(\$value) || $typeAssertion";
+		}
+
+		return [ $returnType, $typeAssertion ];
 	}
 
 	public function addTypeHintForAccessor(Method $method, ReflectionProperty $prop): void

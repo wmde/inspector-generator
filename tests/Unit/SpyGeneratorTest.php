@@ -39,6 +39,13 @@ class SpyGeneratorTest extends TestCase
 		$this->assertNotNull($spyClass->getPrevious());
 	}
 
+	public function test_generated_class_provides_access_to_nullable_properties(): void
+    {
+		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\OrderSpy($this->newSingularOrderFixture());
+
+		$this->assertNull($spyClass->getPrevious());
+	}
+
 	private function newOrderFixture(): Order
     {
 		$order = new Order('2');
@@ -46,5 +53,10 @@ class SpyGeneratorTest extends TestCase
 		$order->applyRebate(0.2);
 		$order->fulfill('Fulfilled by Joe', new Order('1'));
 		return $order;
+	}
+
+	private function newSingularOrderFixture(): Order
+    {
+		return new Order('2');
 	}
 }
