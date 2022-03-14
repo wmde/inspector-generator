@@ -1,0 +1,27 @@
+{
+    "name": "wmde/spy-generator",
+    "description": "Code generation tool for private class inspection",
+    "require": {
+        "nette/php-generator": "^4.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Wmde\\SpyGenerator\\": "src/"
+        }
+    },
+	"autoload-dev": {
+        "psr-4": {
+            "Wmde\\SpyGenerator\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gabriel Birk",
+            "email": "gabriel.birke@wikimedia.de"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
