@@ -17,38 +17,51 @@ class SpyGenerator {
 	}
 
 	public function generateSpy( string $className, string $spyName ): string {
-		$reflectedClass = new ReflectionClass($className);
-
 		$namespace = new PhpNamespace($this->namespace);
 		$spyClass = $namespace->addClass($spyName);
+		$this->createProperties($spyClass);
+		$this->createConstructor($spyClass, $className);
+		$this->createAccessors($spyClass, $className);
+		
+		$printer = new Printer();
+		return $printer->printNamespace($namespace);
+	}
+
+	private function createProperties(ClassType $spyClass): void {
 		$spyClass->addProperty('reflectedClass')
-		   ->setType('\ReflectionClass');
+		   ->setType('\ReflectionClass')
+		   ->setPrivate();
+	}
+
+	private function createConstructor(ClassType $spyClass, string $className): void {
 		$constructor = $spyClass->addMethod('__construct')
 			->setBody('$this->reflectedClass = new \ReflectionClass($inspectionObject);');
 		$constructor->addPromotedParameter('inspectionObject')
 			  ->setType( $className );
+	}
 
+	private function createAccessors(ClassType $spyClass, string $className): void {
+		$reflectedClass = new ReflectionClass($className);
+		// TODO use loop
 		$prop = $reflectedClass->getProperty('fulfilled');
 		$this->createAccessor($spyClass, $prop);
-
-		$printer = new Printer();
-		return $printer->printNamespace($namespace);
 	}
 
 	private function createAccessor(ClassType $spyClass, ReflectionProperty $prop): void {
 		$name = $prop->getName();
 		$accessorName = 'get'.ucfirst($name);
 		$type = $prop->getType() ? $prop->getType()->getName() : 'mixed';
-		$propertyGetter = $spyClass->addMethod($accessorName)
-							 ->setReturnType($type)
-							 ->addBody('$prop = $this->reflectedClass->getProperty(?);', [$name] )
-							 ->addBody('$prop->setAccessible(true);')
-							 ->addBody('$value = $prop->getValue($this->inspectionObject);')
-							 // TODO make dynamic, based on $prop->getType
-							 ->addBody('assert(is_bool($value));')
-							 ->addBody('return $value;');
+		$spyClass->addMethod($accessorName)
+			 ->setReturnType($type)
+			 ->addBody('$prop = $this->reflectedClass->getProperty(?);', [$name] )
+			 ->addBody('$prop->setAccessible(true);')
+			 ->addBody('$value = $prop->getValue($this->inspectionObject);')
+			 // TODO make dynamic, based on $prop->getType
+			 ->addBody('assert(is_bool($value));')
+			 ->addBody('return $value;');
 
 	}
+
 
 }
 
