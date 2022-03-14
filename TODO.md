@@ -1,7 +1,5 @@
 # Next steps for MVC
 
-- [ ] Type assertions for all types
- 	- Nullable types
 - [ ] Test with inherted properties
 - [ ] Expand README
    - When to use
