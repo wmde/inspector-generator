@@ -13,9 +13,9 @@ use Wmde\SpyGenerator\Tests\Classes\Order;
 class SpyGeneratorTest extends TestCase {
 
 	public function test_it_provides_access_to_boolean_properties(): void {
-		$generator = new SpyGenerator();
+		$generator = new SpyGenerator('Wmde\SpyGenerator\Test\Generated');
 
-		$spyClassCode = $generator->generateSpy( Order::class, 'Wmde\SpyGenerator\Test\Generated\BooleanOrderSpy');
+		$spyClassCode = $generator->generateSpy( Order::class, 'BooleanOrderSpy');
 		eval($spyClassCode);
 		$spyClass = new \Wmde\SpyGenerator\Test\Generated\BooleanOrderSpy($this->newOrderFixture());
 
