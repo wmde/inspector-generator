@@ -9,6 +9,9 @@ namespace Wmde\SpyGenerator\Tests\Classes;
 class Order {
 	private bool $fulfilled;
 	private int $amount;
+	/**
+	 * @var string[]
+	 */
 	private array $items;
 	private string $comment;
 	private ?Order $previous = null;
@@ -29,7 +32,7 @@ class Order {
 		$this->amount += $amount;
 	}
 
-	public function applyRebate( float $rebate ) {
+	public function applyRebate( float $rebate ): void {
 		$this->rebate = $rebate;
 	}
 
@@ -40,5 +43,15 @@ class Order {
 		$this->fulfilled = true;
 		$this->comment = $comment;
 		$this->previous = $previous;
+	}
+
+	public function duplicate(): self {
+		$order = new self($this->id);
+		$order->fulfilled = $this->fulfilled;
+		$order->comment = $this->comment;
+		$order->items = $this->items;
+		$order->previous = $this->previous;
+		$order->rebate = $this->rebate;
+		return $order;
 	}
 }

@@ -7,6 +7,7 @@ use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpNamespace;
 use Nette\PhpGenerator\Printer;
 use ReflectionClass;
+use ReflectionNamedType;
 use ReflectionProperty;
 
 class SpyGenerator {
@@ -16,12 +17,16 @@ class SpyGenerator {
 		// TODO add header comments
 	}
 
+	/**
+	 * @param class-string $className
+	 * @param string $spyName
+	 */
 	public function generateSpy( string $className, string $spyName ): string {
 		$namespace = new PhpNamespace($this->namespace);
 		$reflectedClass = new ReflectionClass($className);
 		$namespace->addUse($reflectedClass->getName());
 		$spyClass = $namespace->addClass($spyName);
-		$this->createProperties($spyClass);
+		$this->createProperties($spyClass, $reflectedClass->getShortName());
 		$this->createConstructor($spyClass, $className);
 		$this->createAccessors($spyClass, $className);
 		
@@ -29,9 +34,10 @@ class SpyGenerator {
 		return $printer->printNamespace($namespace);
 	}
 
-	private function createProperties(ClassType $spyClass): void {
+	private function createProperties(ClassType $spyClass, string $shortClassName): void {
 		$spyClass->addProperty('reflectedClass')
 		   ->setType('\ReflectionClass')
+	   	   ->setComment("@var \\ReflectionClass<$shortClassName>")
 		   ->setPrivate();
 	}
 
@@ -42,6 +48,10 @@ class SpyGenerator {
 			  ->setType( $className );
 	}
 
+	/**
+	 * @param ClassType $spyClass
+	 * @param class-string $className
+	 */
 	private function createAccessors(ClassType $spyClass, string $className): void {
 		$this->createGetValueMethod($spyClass);
 		$reflectedClass = new ReflectionClass($className);
@@ -65,13 +75,28 @@ class SpyGenerator {
 	private function createAccessor(ClassType $spyClass, ReflectionProperty $prop): void {
 		$name = $prop->getName();
 		$accessorName = 'get'.ucfirst($name);
-		$type = $prop->getType() ? $prop->getType()->getName() : 'mixed';
+		[$returnType, $typeAssertion] = $this->getAccessorType($prop);
 		$spyClass->addMethod($accessorName)
-			 ->setReturnType($type)
+			 ->setReturnType($returnType)
 			 ->addBody('$value = $this->getPrivateValue(?);', [$name] )
-			 // TODO make dynamic, based on $prop->getType
-			 ->addBody('assert(is_bool($value));')
+			 ->addBody("assert($typeAssertion);")
 			 ->addBody('return $value;');
+
+	}
+
+	/**
+	 * @return array{string,string}
+	 */
+	private function getAccessorType(ReflectionProperty $prop): array {
+		$propertyType = $prop->getType();
+		if ( !($propertyType instanceof ReflectionNamedType) ) {
+			return ['mixed', ''];
+		}
+		return [
+			$propertyType->getName(),
+			 // TODO make dynamic, based on $prop->getType
+			'is_bool($value)'
+		];
 
 	}
 

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator\Unit;
+namespace Wmde\SpyGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use Wmde\SpyGenerator\SpyGenerator;
@@ -13,12 +13,12 @@ use Wmde\SpyGenerator\Tests\Classes\Order;
 class SpyGeneratorTest extends TestCase {
 
 	public function test_it_provides_access_to_boolean_properties(): void {
-		$generator = new SpyGenerator('Wmde\SpyGenerator\Test\Generated');
+		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
 
 		$spyClassCode = $generator->generateSpy( Order::class, 'BooleanOrderSpy');
 		file_put_contents(__DIR__ . '/../Generated/BooleanOrderSpy.php', "<?php\ndeclare(strict_types=1);\n\n".$spyClassCode );
 		require_once __DIR__ . '/../Generated/BooleanOrderSpy.php';
-		$spyClass = new \Wmde\SpyGenerator\Test\Generated\BooleanOrderSpy($this->newOrderFixture());
+		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\BooleanOrderSpy($this->newOrderFixture());
 
 		$this->assertTrue($spyClass->getFulfilled());
 	}
