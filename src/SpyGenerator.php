@@ -18,6 +18,8 @@ class SpyGenerator {
 
 	public function generateSpy( string $className, string $spyName ): string {
 		$namespace = new PhpNamespace($this->namespace);
+		$reflectedClass = new ReflectionClass($className);
+		$namespace->addUse($reflectedClass->getName());
 		$spyClass = $namespace->addClass($spyName);
 		$this->createProperties($spyClass);
 		$this->createConstructor($spyClass, $className);
