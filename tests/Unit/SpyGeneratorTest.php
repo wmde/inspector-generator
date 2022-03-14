@@ -16,7 +16,8 @@ class SpyGeneratorTest extends TestCase {
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Test\Generated');
 
 		$spyClassCode = $generator->generateSpy( Order::class, 'BooleanOrderSpy');
-		eval($spyClassCode);
+		file_put_contents(__DIR__ . '/../Generated/BooleanOrderSpy.php', "<?php\ndeclare(strict_types=1);\n\n".$spyClassCode );
+		require_once __DIR__ . '/../Generated/BooleanOrderSpy.php';
 		$spyClass = new \Wmde\SpyGenerator\Test\Generated\BooleanOrderSpy($this->newOrderFixture());
 
 		$this->assertTrue($spyClass->getFulfilled());

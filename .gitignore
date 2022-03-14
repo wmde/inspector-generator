@@ -1,2 +1,5 @@
 vendor
 .phpunit.cache
+
+# Ignore generated classes
+tests/Generated
