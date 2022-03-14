@@ -23,7 +23,7 @@ class SpyGeneratorTest extends TestCase
 		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
 		require $fileName;
 
-		$this->assertTrue(class_exists('Wmde\SpyGenerator\Tests\Generated\OrderSpy', true));
+		$this->assertTrue(class_exists('\Wmde\SpyGenerator\Tests\Generated\OrderSpy', false));
 	}
 
 
@@ -36,14 +36,15 @@ class SpyGeneratorTest extends TestCase
 		$this->assertSame('Fulfilled by Joe', $spyClass->getComment());
 		$this->assertSame(0.2, $spyClass->getRebate());
 		$this->assertSame(['Test item'], $spyClass->getItems());
+		$this->assertNotNull($spyClass->getPrevious());
 	}
 
 	private function newOrderFixture(): Order
     {
-		$order = new Order('1');
+		$order = new Order('2');
 		$order->addItem('Test item', 1000);
 		$order->applyRebate(0.2);
-		$order->fulfill('Fulfilled by Joe');
+		$order->fulfill('Fulfilled by Joe', new Order('1'));
 		return $order;
 	}
 }

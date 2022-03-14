@@ -75,6 +75,8 @@ class SpyGenerator
 		$this->createAccessor($spyClass, $prop);
 		$prop = $reflectedClass->getProperty('items');
 		$this->createAccessor($spyClass, $prop);
+		$prop = $reflectedClass->getProperty('previous');
+		$this->createAccessor($spyClass, $prop);
 	}
 
 	private function createGetValueMethod(ClassType $spyClass): void
@@ -99,7 +101,7 @@ class SpyGenerator
 		$accessorMethod->setBody('return $this->getPrivateValue(?);', [$name]);
 		if ($typeAssertion) {
 			$accessorMethod
-				 ->setBody('$value = $this->getPrivateValue(?);', [$name])
+				->setBody('$value = $this->getPrivateValue(?);', [$name])
 				 ->addBody("assert($typeAssertion);")
 				 ->addBody('return $value;');
 		}
@@ -112,11 +114,10 @@ class SpyGenerator
 	private function getAccessorType(ReflectionProperty $prop): array
     {
 		$propertyType = $prop->getType();
+		// TODO $propertyType->allowsNull check here
 		if (!($propertyType instanceof ReflectionNamedType)) {
 			return ['mixed', ''];
 		}
-		$typeAssertion = '';
-		// TODO $propertyType->allowsNull check here
 		if ($propertyType->isBuiltin()) {
 			$typeAssertion = match ($propertyType->getName()) {
 				'bool' => 'is_bool($value)',
@@ -126,8 +127,10 @@ class SpyGenerator
 				'array' => 'is_array($value)',
 				default => ''
 			};
+			return [ $propertyType->getName(), $typeAssertion ];
 		}
-		return [ $propertyType->getName(), $typeAssertion ];
+
+		return [ $propertyType->getName(), '$value instanceof \\' . $propertyType->getName() ];
 	}
 
 	public function addTypeHintForAccessor(Method $method, ReflectionProperty $prop): void
