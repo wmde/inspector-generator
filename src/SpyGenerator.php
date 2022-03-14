@@ -92,9 +92,10 @@ class SpyGenerator
 		$accessorMethod->setBody('return $this->getPrivateValue(?);', [$name]);
 		if ($typeAssertion) {
 			$accessorMethod
-				->setBody('$value = $this->getPrivateValue(?);', [$name])
-				 ->addBody("assert($typeAssertion);")
-				 ->addBody('return $value;');
+				->setBody('')
+				->addBody('$value = $this->getPrivateValue(?);', [$name])
+				->addBody("assert($typeAssertion);")
+				->addBody('return $value;');
 		}
 		$this->addTypeHintForAccessor($accessorMethod, $prop);
 	}
