@@ -17,21 +17,30 @@
     },
     "authors": [
         {
-            "name": "Gabriel Birk",
+            "name": "Gabriel Birke",
             "email": "gabriel.birke@wikimedia.de"
         }
     ],
     "require-dev": {
         "phpunit/phpunit": "^9.5",
         "phpstan/phpstan-phpunit": "^1.0",
-        "phpstan/phpstan": "^1.4"
+        "phpstan/phpstan": "^1.4",
+        "vimeo/psalm": "^4.22",
+        "psalm/plugin-phpunit": "^0.16.1"
     },
 	"scripts": {
 		"test": "vendor/bin/phpunit",
 		"phpstan": "vendor/bin/phpstan",
+		"psalm": "vendor/bin/psalm",
 		"ci": [
 			"@test",
-			"@phpstan"
+			"@phpstan",
+			"@psalm"
 		]
-	}
+	},
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    }
 }

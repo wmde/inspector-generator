@@ -25,6 +25,7 @@ class Order {
 		$this->comment = '';
 		$this->amount = 0;
 		$this->rebate = 0.0;
+		$this->items = [];
 	}
 
 	public function addItem( string $name, int $amount ): void {
