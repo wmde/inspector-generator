@@ -43,10 +43,23 @@ class SpyGenerator {
 	}
 
 	private function createAccessors(ClassType $spyClass, string $className): void {
+		$this->createGetValueMethod($spyClass);
 		$reflectedClass = new ReflectionClass($className);
 		// TODO use loop
 		$prop = $reflectedClass->getProperty('fulfilled');
 		$this->createAccessor($spyClass, $prop);
+	}
+
+	private function createGetValueMethod(ClassType $spyClass): void {
+		$spyClass->addMethod('getPrivateValue')
+		   ->setPrivate()
+		   ->setReturnType('mixed')
+			 ->addBody('$prop = $this->reflectedClass->getProperty($propertyName);' )
+			 ->addBody('$prop->setAccessible(true);')
+			 ->addBody('return $prop->getValue($this->inspectionObject);')
+			 ->addParameter('propertyName')
+		 ->setType('string');
+	   		
 	}
 
 	private function createAccessor(ClassType $spyClass, ReflectionProperty $prop): void {
@@ -55,9 +68,7 @@ class SpyGenerator {
 		$type = $prop->getType() ? $prop->getType()->getName() : 'mixed';
 		$spyClass->addMethod($accessorName)
 			 ->setReturnType($type)
-			 ->addBody('$prop = $this->reflectedClass->getProperty(?);', [$name] )
-			 ->addBody('$prop->setAccessible(true);')
-			 ->addBody('$value = $prop->getValue($this->inspectionObject);')
+			 ->addBody('$value = $this->getPrivateValue(?);', [$name] )
 			 // TODO make dynamic, based on $prop->getType
 			 ->addBody('assert(is_bool($value));')
 			 ->addBody('return $value;');
