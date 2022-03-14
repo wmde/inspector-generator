@@ -1,10 +1,7 @@
 # Next steps for MVC
 
 - [ ] Type assertions for all types
-  	- Builtin types
-  	- Classes
  	- Nullable types
-- [ ] Iterate over all properties
 - [ ] Test with inherted properties
 - [ ] Expand README
    - When to use

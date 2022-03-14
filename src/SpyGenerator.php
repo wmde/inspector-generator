@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Wmde\SpyGenerator;
 
-use LogicException;
-use Nette\NotImplementedException;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
 use Nette\PhpGenerator\PhpNamespace;
@@ -64,19 +62,12 @@ class SpyGenerator
     {
 		$this->createGetValueMethod($spyClass);
 		$reflectedClass = new ReflectionClass($className);
-		// TODO use loop
-		$prop = $reflectedClass->getProperty('fulfilled');
-		$this->createAccessor($spyClass, $prop);
-		$prop = $reflectedClass->getProperty('amount');
-		$this->createAccessor($spyClass, $prop);
-		$prop = $reflectedClass->getProperty('comment');
-		$this->createAccessor($spyClass, $prop);
-		$prop = $reflectedClass->getProperty('rebate');
-		$this->createAccessor($spyClass, $prop);
-		$prop = $reflectedClass->getProperty('items');
-		$this->createAccessor($spyClass, $prop);
-		$prop = $reflectedClass->getProperty('previous');
-		$this->createAccessor($spyClass, $prop);
+		$propertyFilter = ReflectionProperty::IS_PROTECTED
+			| ReflectionProperty::IS_PRIVATE
+			| ReflectionProperty::IS_READONLY;
+		foreach ($reflectedClass->getProperties($propertyFilter) as $prop) {
+			$this->createAccessor($spyClass, $prop);
+		}
 	}
 
 	private function createGetValueMethod(ClassType $spyClass): void
