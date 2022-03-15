@@ -2,6 +2,7 @@
     "name": "wmde/spy-generator",
     "description": "Code generation tool for private class inspection",
     "require": {
+		"php": ">=8.0",
         "nette/php-generator": "^4.0",
         "phpdocumentor/reflection-docblock": "^5.3"
     },

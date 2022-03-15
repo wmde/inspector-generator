@@ -18,12 +18,14 @@ class SpyGeneratorTest extends TestCase
 	{
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
 
-		$code = $generator->generateSpy(Order::class, 'OrderSpy');
+		$result = $generator->generateSpy(Order::class, 'OrderSpy');
+		$code = $result->code;
 
 		$fileName = __DIR__ . "/../Generated/OrderSpy.php";
 		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
 		require $fileName;
 
+		$this->assertSame('Wmde\SpyGenerator\Tests\Generated\OrderSpy', $result->fullyQualifiedClassName);
 		$this->assertTrue(class_exists('\Wmde\SpyGenerator\Tests\Generated\OrderSpy', false));
 	}
 
@@ -56,7 +58,8 @@ class SpyGeneratorTest extends TestCase
 	public function test_generated_class_provides_access_to_inherited_properties(): void
     {
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
-		$code = $generator->generateSpy(SpecialOrder::class, 'SpecialOrderSpy');
+		$result = $generator->generateSpy(SpecialOrder::class, 'SpecialOrderSpy');
+		$code = $result->code;
 		$fileName = __DIR__ . "/../Generated/SpecialOrderSpy.php";
 		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
 		require $fileName;

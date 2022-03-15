@@ -24,7 +24,7 @@ class SpyGenerator
 	 * @param class-string $className
 	 * @param string $spyName
 	 */
-	public function generateSpy(string $className, string $spyName): string
+	public function generateSpy(string $className, string $spyName): SpyClassResult
     {
 		$namespace = new PhpNamespace($this->namespace);
 		$reflectedClass = new ReflectionClass($className);
@@ -35,7 +35,10 @@ class SpyGenerator
 		$this->createAccessors($spyClass, $className);
 
 		$printer = new PsrPrinter();
-		return $printer->printNamespace($namespace);
+		return new SpyClassResult(
+			$printer->printNamespace($namespace),
+			$this->namespace . '\\' . $spyName
+		);
 	}
 
 	private function createProperties(ClassType $spyClass, string $shortClassName): void
