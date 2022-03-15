@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator\Tests\Classes;
+namespace Wmde\SpyGenerator\Tests\ExampleClasses;
 
 class SpecialOrder extends Order
 {

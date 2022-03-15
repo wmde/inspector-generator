@@ -9,9 +9,9 @@ use ReflectionClass;
 use Wmde\SpyGenerator\Psr4CodeWriter;
 use Wmde\SpyGenerator\SpyClassResult;
 use Wmde\SpyGenerator\SpyGenerator;
-use Wmde\SpyGenerator\Tests\Classes\NullableOrder;
-use Wmde\SpyGenerator\Tests\Classes\Order;
-use Wmde\SpyGenerator\Tests\Classes\SpecialOrder;
+use Wmde\SpyGenerator\Tests\ExampleClasses\NullableOrder;
+use Wmde\SpyGenerator\Tests\ExampleClasses\Order;
+use Wmde\SpyGenerator\Tests\ExampleClasses\SpecialOrder;
 
 /**
  * @covers \Wmde\SpyGenerator\SpyGenerator
