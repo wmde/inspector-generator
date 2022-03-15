@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Wmde\SpyGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Wmde\SpyGenerator\CodeWriter;
+use Wmde\SpyGenerator\Psr4CodeWriter;
 use Wmde\SpyGenerator\SpyGenerator;
 use Wmde\SpyGenerator\Tests\Classes\Order;
 use Wmde\SpyGenerator\Tests\Classes\SpecialOrder;
@@ -17,12 +19,13 @@ class SpyGeneratorTest extends TestCase
 	public function test_it_generates_class(): void
 	{
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
-
+		$writer = $this->makeWriter();
 		$result = $generator->generateSpy(Order::class, 'OrderSpy');
-		$code = $result->code;
 
-		$fileName = __DIR__ . "/../Generated/OrderSpy.php";
-		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
+		$fileName = $writer->writeResult($result);
+		/**
+		 * @psalm-suppress UnresolvableInclude
+		 */
 		require $fileName;
 
 		$this->assertSame('Wmde\SpyGenerator\Tests\Generated\OrderSpy', $result->fullyQualifiedClassName);
@@ -59,9 +62,11 @@ class SpyGeneratorTest extends TestCase
     {
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
 		$result = $generator->generateSpy(SpecialOrder::class, 'SpecialOrderSpy');
-		$code = $result->code;
-		$fileName = __DIR__ . "/../Generated/SpecialOrderSpy.php";
-		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
+		$writer = $this->makeWriter();
+		$fileName = $writer->writeResult($result);
+		/**
+		 * @psalm-suppress UnresolvableInclude
+		 */
 		require $fileName;
 
 		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\SpecialOrderSpy($this->newSpecialOrderFixture());
@@ -89,5 +94,12 @@ class SpyGeneratorTest extends TestCase
 		$order = new SpecialOrder('99');
 		$order->addLove();
 		return $order;
+	}
+
+	private function makeWriter(): CodeWriter
+    {
+		return new Psr4CodeWriter([
+			'Wmde\SpyGenerator\Tests\\' => __DIR__ . '/../'
+		]);
 	}
 }
