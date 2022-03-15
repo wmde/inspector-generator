@@ -11,6 +11,8 @@ namespace Wmde\SpyGenerator\Tests\Classes;
  */
 class Order implements OrderInterface
 {
+	private static string $prefix = "O-";
+
 	protected bool $fulfilled;
 	protected int $amount;
 	/**
@@ -61,5 +63,19 @@ class Order implements OrderInterface
 		$order->previous = $this->previous;
 		$order->rebate = $this->rebate;
 		return $order;
+	}
+
+	public static function setNewPrefixForAllOrders(string $prefix): void
+    {
+		self::$prefix = $prefix;
+	}
+
+	/**
+	 * This method could be used to "access" the prefix.
+	 * It's just here to make the static analyzers happy
+	 */
+	public static function prefixRandomString(string $someString): string
+    {
+		return self::$prefix . $someString;
 	}
 }

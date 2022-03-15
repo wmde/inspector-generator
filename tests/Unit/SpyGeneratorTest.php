@@ -6,7 +6,6 @@ namespace Wmde\SpyGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Wmde\SpyGenerator\CodeWriter;
 use Wmde\SpyGenerator\Psr4CodeWriter;
 use Wmde\SpyGenerator\SpyClassResult;
 use Wmde\SpyGenerator\SpyGenerator;
@@ -43,13 +42,13 @@ class SpyGeneratorTest extends TestCase
 		$this->assertSame('Fulfilled by Joe', $spyClass->getComment());
 		$this->assertSame(0.2, $spyClass->getRebate());
 		$this->assertSame(['Test item'], $spyClass->getItems());
+		$this->assertSame('O-', $spyClass->getPrefix());
 		$this->assertNotNull($spyClass->getPrevious());
 	}
 
 	public function test_generated_class_provides_access_to_nullable_properties(): void
 	{
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
-
 		$result = $generator->generateSpy(NullableOrder::class, 'NullableOrderSpy');
 		$this->loadClassCode($result);
 

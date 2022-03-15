@@ -9,7 +9,7 @@
 		them in or not)
 	- Inheritance behavior
 	- Accessor bypass
-- Throw in some static properties, see what happens
+	- static properties also accessible through instance methods on spy
 
 # Beyond MVC
 - Add CI with GitHub Actions
