@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator;
+namespace Wmde\InspectorGenerator;
 
-final class SpyClassResult
+final class GeneratedInspectorResult
 {
 	public function __construct(
 		/** @readonly */

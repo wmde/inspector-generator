@@ -1,6 +1,6 @@
 {
-    "name": "wmde/spy-generator",
-    "description": "Code generation tool for private class inspection",
+    "name": "wmde/inspector-generator",
+    "description": "Code generation tool for type-safe private property inspection",
     "require": {
 		"php": ">=8.0",
         "nette/php-generator": "^4.0",
@@ -9,12 +9,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Wmde\\SpyGenerator\\": "src/"
+            "Wmde\\InspectorGenerator\\": "src/"
         }
     },
 	"autoload-dev": {
         "psr-4": {
-            "Wmde\\SpyGenerator\\Tests\\": "tests/"
+            "Wmde\\InspectorGenerator\\Tests\\": "tests/"
         }
     },
     "authors": [

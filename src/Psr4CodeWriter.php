@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator;
+namespace Wmde\InspectorGenerator;
 
 use LogicException;
 
@@ -22,7 +22,7 @@ class Psr4CodeWriter implements CodeWriter
 		}
 	}
 
-	public function writeResult(SpyClassResult $result): string
+	public function writeResult(GeneratedInspectorResult $result): string
     {
 		[$prefix, $destinationPath] = $this->getNamespaceMapForClass($result->fullyQualifiedClassName);
 		$filename = $this->getFilenameForClass($result->fullyQualifiedClassName, $prefix, $destinationPath);
@@ -42,7 +42,7 @@ class Psr4CodeWriter implements CodeWriter
 		}
 	}
 
-	private function doWrite(SpyClassResult $result, string $filename): void
+	private function doWrite(GeneratedInspectorResult $result, string $filename): void
     {
 		if (file_put_contents($filename, self::PHP_INTRO . $result->code) === false) {
 			throw new \RuntimeException("Could not write to file $filename");

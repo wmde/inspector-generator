@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator;
+namespace Wmde\InspectorGenerator;
 
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\Method;
@@ -13,47 +13,46 @@ use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionProperty;
 
-class SpyGenerator
+class InspectorGenerator
 {
 	public function __construct(private string $namespace)
 	{
-		// TODO add header comments
 	}
 
 	/**
-	 * @param class-string $className
-	 * @param string $spyName
+	 * @param class-string $inspectedClassName
+	 * @param string $inspectorClassName Class name without namespace
 	 */
-	public function generateSpy(string $className, string $spyName): SpyClassResult
+	public function generateInspector(string $inspectedClassName, string $inspectorClassName): GeneratedInspectorResult
     {
 		$namespace = new PhpNamespace($this->namespace);
 
-		$reflectedClass = new ReflectionClass($className);
+		$reflectedClass = new ReflectionClass($inspectedClassName);
 		$namespace->addUse($reflectedClass->getName());
 
-		$spyClass = $namespace->addClass($spyName);
-		$this->createProperties($spyClass, $reflectedClass->getShortName());
-		$this->createConstructor($spyClass, $className);
-		$this->createAccessors($spyClass, $className);
+		$inspectorClass = $namespace->addClass($inspectorClassName);
+		$this->createProperties($inspectorClass, $reflectedClass->getShortName());
+		$this->createConstructor($inspectorClass, $inspectedClassName);
+		$this->createAccessors($inspectorClass, $inspectedClassName);
 
 		$printer = new PsrPrinter();
-		return new SpyClassResult(
+		return new GeneratedInspectorResult(
 			$printer->printNamespace($namespace),
-			$this->namespace . '\\' . $spyName
+			$this->namespace . '\\' . $inspectorClassName
 		);
 	}
 
-	private function createProperties(ClassType $spyClass, string $shortClassName): void
+	private function createProperties(ClassType $inspectorClass, string $shortClassName): void
     {
-		$spyClass->addProperty('reflectedClass')
+		$inspectorClass->addProperty('reflectedClass')
 		   ->setType('\ReflectionClass')
 	   	   ->setComment("@var \\ReflectionClass<$shortClassName>")
 		   ->setPrivate();
 	}
 
-	private function createConstructor(ClassType $spyClass, string $className): void
+	private function createConstructor(ClassType $inspectorClass, string $className): void
     {
-		$constructor = $spyClass->addMethod('__construct')
+		$constructor = $inspectorClass->addMethod('__construct')
 			->setBody('$this->reflectedClass = new \ReflectionClass($inspectionObject);');
 		$constructor->addPromotedParameter('inspectionObject')
 				->setPrivate()
@@ -61,24 +60,24 @@ class SpyGenerator
 	}
 
 	/**
-	 * @param ClassType $spyClass
+	 * @param ClassType $inspectorClass
 	 * @param class-string $className
 	 */
-	private function createAccessors(ClassType $spyClass, string $className): void
+	private function createAccessors(ClassType $inspectorClass, string $className): void
     {
-		$this->createGetValueMethod($spyClass);
+		$this->createGetValueMethod($inspectorClass);
 		$reflectedClass = new ReflectionClass($className);
 		$propertyFilter = ReflectionProperty::IS_PROTECTED
 			| ReflectionProperty::IS_PRIVATE
 			| ReflectionProperty::IS_READONLY;
 		foreach ($reflectedClass->getProperties($propertyFilter) as $prop) {
-			$this->createAccessor($spyClass, $prop);
+			$this->createAccessor($inspectorClass, $prop);
 		}
 	}
 
-	private function createGetValueMethod(ClassType $spyClass): void
+	private function createGetValueMethod(ClassType $inspectorClass): void
     {
-		$spyClass->addMethod('getPrivateValue')
+		$inspectorClass->addMethod('getPrivateValue')
 		   ->setPrivate()
 		   ->setReturnType('mixed')
 		   ->addBody('if (!$this->reflectedClass->hasProperty($propertyName)) {')
@@ -94,12 +93,12 @@ class SpyGenerator
 		   ->setType('string');
 	}
 
-	private function createAccessor(ClassType $spyClass, ReflectionProperty $prop): void
+	private function createAccessor(ClassType $inspectorClass, ReflectionProperty $prop): void
     {
 		$name = $prop->getName();
 		$accessorName = 'get' . ucfirst($name);
 		[$returnType, $typeAssertion] = $this->getAccessorType($prop);
-		$accessorMethod = $spyClass->addMethod($accessorName)
+		$accessorMethod = $inspectorClass->addMethod($accessorName)
 			 ->setReturnType($returnType);
 		$accessorMethod->setBody('return $this->getPrivateValue(?);', [$name]);
 		if ($typeAssertion) {

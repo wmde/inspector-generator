@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator\Tests\ExampleClasses;
+namespace Wmde\InspectorGenerator\Tests\ExampleClasses;
 
 /**
  * This constructor interface exists to make PHPStan happy.

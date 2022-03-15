@@ -1,7 +1,7 @@
-# PHP inspector class generator
+# PHP introspection class generator
 
-This utility generates type-safe "Inspector" classes that access private
-properties through reflection, for use in white-box tests.
+This utility generates type-safe "Inspector" classes for classes with
+hard-to-access private properties, for use in white-box tests.
 
 The benefit of using generated classes is their type-safety. Your IDE
 and the static type checkers won't complain about undefined properties or
@@ -10,28 +10,28 @@ mixed return types.
 ### When should I use this?
 
 You should not use the inspector classes inside your production code,
-*only inside tests*! Even in tests, it's a code smell, because your tests
-rely on implementation details that are encapsulated for a reason! Only
-use this library as a last resort, for example for testing the
-(de)serialiation of your persistence layer.
+*only inside tests*! Even in tests, it's a code smell, because it makes
+your tests rely on implementation details that are encapsulated for a
+reason! Only use this library as a last resort, for example for testing
+the (de)serialiation of your persistence layer.
 
 ## Installation
 
-	composer require wmde/spy-generator
+	composer require wmde/inspector-generator
 
 ## Setting up the class generation
 
 Before you can use the generated classes in you tests, you need to
 generate them. Decide on a file path and namespace where to put them and
-create a PHP script, e.g. `tests/generate_spies.php` that contains code
+create a PHP script, e.g. `tests/generate_inspectors.php` that contains code
 like this:
 
 ```php
 
-$generator = new Wmde\SpyGenerator\SpyGenerator('App\Tests\Inspectors');
-$writer = new Wmde\SpyGenerator\Psr4Writer(['App\Tests\\' => __DIR__]);
+$generator = new Wmde\InspectorGenerator\InspectorGenerator('App\Tests\Inspectors');
+$writer = new Wmde\InspectorGenerator\Psr4Writer(['App\Tests\\' => __DIR__]);
 
-// Create spies for your classes
+// Create inspectors for your classes
 $writer->writeResult($generator->generate('App\Foo\SomeObject', 'SomeObjectInspector'));
 $writer->writeResult($generator->generate('App\Bar\OtherObject', 'OtherObjectPeeker'));
 // ... etc

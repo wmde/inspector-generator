@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator;
+namespace Wmde\InspectorGenerator;
 
 interface CodeWriter
 {
-	public function writeResult(SpyClassResult $result): string;
+	public function writeResult(GeneratedInspectorResult $result): string;
 }

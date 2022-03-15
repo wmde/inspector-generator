@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Wmde\SpyGenerator\Tests\Unit;
+namespace Wmde\InspectorGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Wmde\SpyGenerator\Psr4CodeWriter;
-use Wmde\SpyGenerator\SpyClassResult;
+use Wmde\InspectorGenerator\Psr4CodeWriter;
+use Wmde\InspectorGenerator\GeneratedInspectorResult;
 
 /**
- * @covers \Wmde\SpyGenerator\Psr4CodeWriter
+ * @covers \Wmde\InspectorGenerator\Psr4CodeWriter
  */
 class Psr4CodeWriterTest extends TestCase
 {
@@ -26,11 +26,11 @@ class Psr4CodeWriterTest extends TestCase
 	public function test_writer_writes_to_file(): void
     {
 		$destinationPath = sys_get_temp_dir() . '/' . uniqid('test_');
-		$writer = new Psr4CodeWriter([ "WMDE\\SpyGenerator\\Tests\\" => $destinationPath]);
+		$writer = new Psr4CodeWriter([ "WMDE\\InspectorGenerator\\Tests\\" => $destinationPath]);
 
-		$filename = $writer->writeResult(new SpyClassResult(
+		$filename = $writer->writeResult(new GeneratedInspectorResult(
 			'// No code here',
-			'WMDE\SpyGenerator\Tests\FirstNamespace\SubNamespace\TestClass'
+			'WMDE\InspectorGenerator\Tests\FirstNamespace\SubNamespace\TestClass'
 		));
 
 		$this->assertSame("$destinationPath/FirstNamespace/SubNamespace/TestClass.php", $filename);
@@ -40,11 +40,11 @@ class Psr4CodeWriterTest extends TestCase
 	public function test_writer_writes_executable_php_code_to_file(): void
     {
 		$destinationPath = sys_get_temp_dir() . '/' . uniqid('test_');
-		$writer = new Psr4CodeWriter([ "WMDE\\SpyGenerator\\Tests\\" => $destinationPath]);
+		$writer = new Psr4CodeWriter([ "WMDE\\InspectorGenerator\\Tests\\" => $destinationPath]);
 
-		$filename = $writer->writeResult(new SpyClassResult(
+		$filename = $writer->writeResult(new GeneratedInspectorResult(
 			'echo "Test succeeded!";',
-			'WMDE\SpyGenerator\Tests\TestCode'
+			'WMDE\InspectorGenerator\Tests\TestCode'
 		));
 		$this->expectOutputString('Test succeeded!');
 
