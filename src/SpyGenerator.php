@@ -81,12 +81,17 @@ class SpyGenerator
 		$spyClass->addMethod('getPrivateValue')
 		   ->setPrivate()
 		   ->setReturnType('mixed')
-		   // TODO add hadProperty and throw an exception hinting at the need to regenerate
-		   	->addBody('$prop = $this->reflectedClass->getProperty($propertyName);')
-			 ->addBody('$prop->setAccessible(true);')
-			 ->addBody('return $prop->getValue($this->inspectionObject);')
-			 ->addParameter('propertyName')
-		 ->setType('string');
+		   ->addBody('if (!$this->reflectedClass->hasProperty($propertyName)) {')
+		   ->addBody('    throw new \LogicException(sprintf(')
+		   ->addBody('        "Property %s not found in class %s. Try re-generating the class %s",')
+		   ->addBody('        $propertyName, $this->reflectedClass->getName(), self::class')
+	   	   ->addBody('    ));')
+	   	   ->addBody('}')
+		   ->addBody('$prop = $this->reflectedClass->getProperty($propertyName);')
+		   ->addBody('$prop->setAccessible(true);')
+		   ->addBody('return $prop->getValue($this->inspectionObject);')
+		   ->addParameter('propertyName')
+		   ->setType('string');
 	}
 
 	private function createAccessor(ClassType $spyClass, ReflectionProperty $prop): void

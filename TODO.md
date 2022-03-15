@@ -5,6 +5,11 @@
    - Generating classes
    - Using generated classes in tests (with possible inheritance to add
 	   interfaces, traits, etc)
+    - Workflow when generating (bootstrap vs standalone script, checking
+		them in or not)
+	- Inheritance behavior
+	- Accessor bypass
+- Throw in some static properties, see what happens
 
 # Beyond MVC
 - Add CI with GitHub Actions

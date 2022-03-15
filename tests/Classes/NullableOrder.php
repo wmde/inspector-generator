@@ -7,7 +7,8 @@ namespace Wmde\SpyGenerator\Tests\Classes;
 /**
  * This is an example class with all-nullable properties.
  *
- * This is just for testing the generation code, in your own code you should avoid nullable properties as much as possible!
+ * This is just for testing the generation code, in your own code
+ * you should avoid nullable properties as much as possible!
  *
  * @psalm-consistent-constructor
  */
