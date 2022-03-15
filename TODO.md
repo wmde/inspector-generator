@@ -1,10 +1,10 @@
 # Next steps for MVC
 
-- [ ] Test with inherted properties
 - [ ] Expand README
    - When to use
    - Generating classes
-   - Using generated classes in tests
+   - Using generated classes in tests (with possible inheritance to add
+	   interfaces, traits, etc)
 
 # Beyond MVC
 - Add CI with GitHub Actions

@@ -7,6 +7,7 @@ namespace Wmde\SpyGenerator\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Wmde\SpyGenerator\SpyGenerator;
 use Wmde\SpyGenerator\Tests\Classes\Order;
+use Wmde\SpyGenerator\Tests\Classes\SpecialOrder;
 
 /**
  * @covers \Wmde\SpyGenerator\SpyGenerator
@@ -52,6 +53,20 @@ class SpyGeneratorTest extends TestCase
 		$this->assertNull($spyClass->getPrevious());
 	}
 
+	public function test_generated_class_provides_access_to_inherited_properties(): void
+    {
+		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
+		$code = $generator->generateSpy(SpecialOrder::class, 'SpecialOrderSpy');
+		$fileName = __DIR__ . "/../Generated/SpecialOrderSpy.php";
+		file_put_contents($fileName, "<?php\ndeclare(strict_types=1);\n\n$code");
+		require $fileName;
+
+		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\SpecialOrderSpy($this->newSpecialOrderFixture());
+
+		$this->assertSame('Lots and lots of love', $spyClass->getSpecialSauce());
+		$this->assertSame('99', $spyClass->getId());
+	}
+
 	private function newOrderFixture(): Order
     {
 		$order = new Order('2');
@@ -64,5 +79,12 @@ class SpyGeneratorTest extends TestCase
 	private function newSingularOrderFixture(): Order
     {
 		return new Order('2');
+	}
+
+	private function newSpecialOrderFixture(): SpecialOrder
+	{
+		$order = new SpecialOrder('99');
+		$order->addLove();
+		return $order;
 	}
 }

@@ -6,21 +6,23 @@ namespace Wmde\SpyGenerator\Tests\Classes;
 
 /**
  * This is an example class of a "write-only" entity that has state changes, but does not expose its properties.
+ *
+ * @psalm-consistent-constructor
  */
-class Order
+class Order implements OrderInterface
 {
-	private bool $fulfilled;
-	private int $amount;
+	protected bool $fulfilled;
+	protected int $amount;
 	/**
 	 * @var string[]
 	 */
-	private array $items;
-	private string $comment;
-	private ?Order $previous = null;
-	private float $rebate;
+	protected array $items;
+	protected string $comment;
+	protected ?Order $previous = null;
+	protected float $rebate;
 
 	public function __construct(
-		private string $id
+		protected string $id
 	) {
 		$this->fulfilled = false;
 		$this->comment = '';
@@ -50,9 +52,9 @@ class Order
 		$this->previous = $previous;
 	}
 
-	public function duplicate(): self
+	public function duplicate(): Order
     {
-		$order = new self($this->id);
+		$order = new static($this->id);
 		$order->fulfilled = $this->fulfilled;
 		$order->comment = $this->comment;
 		$order->items = $this->items;
