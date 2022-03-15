@@ -27,8 +27,10 @@ class SpyGenerator
 	public function generateSpy(string $className, string $spyName): SpyClassResult
     {
 		$namespace = new PhpNamespace($this->namespace);
+
 		$reflectedClass = new ReflectionClass($className);
 		$namespace->addUse($reflectedClass->getName());
+
 		$spyClass = $namespace->addClass($spyName);
 		$this->createProperties($spyClass, $reflectedClass->getShortName());
 		$this->createConstructor($spyClass, $className);
@@ -54,6 +56,7 @@ class SpyGenerator
 		$constructor = $spyClass->addMethod('__construct')
 			->setBody('$this->reflectedClass = new \ReflectionClass($inspectionObject);');
 		$constructor->addPromotedParameter('inspectionObject')
+				->setPrivate()
 			  ->setType($className);
 	}
 
@@ -78,7 +81,8 @@ class SpyGenerator
 		$spyClass->addMethod('getPrivateValue')
 		   ->setPrivate()
 		   ->setReturnType('mixed')
-			 ->addBody('$prop = $this->reflectedClass->getProperty($propertyName);')
+		   // TODO add hadProperty and throw an exception hinting at the need to regenerate
+		   	->addBody('$prop = $this->reflectedClass->getProperty($propertyName);')
 			 ->addBody('$prop->setAccessible(true);')
 			 ->addBody('return $prop->getValue($this->inspectionObject);')
 			 ->addParameter('propertyName')
@@ -116,6 +120,8 @@ class SpyGenerator
 		if ($propertyType->allowsNull()) {
 			$returnType = "?$returnType";
 		}
+		$typeAssertion =  '$value instanceof \\' . $propertyType->getName();
+
 		if ($propertyType->isBuiltin()) {
 			$typeAssertion = match ($propertyType->getName()) {
 				'bool' => 'is_bool($value)',
@@ -125,10 +131,8 @@ class SpyGenerator
 				'array' => 'is_array($value)',
 				default => ''
 			};
-			return [ $returnType, $typeAssertion ];
 		}
 
-		$typeAssertion =  '$value instanceof \\' . $propertyType->getName();
 		if ($propertyType->allowsNull()) {
 			$typeAssertion = "is_null(\$value) || $typeAssertion";
 		}
@@ -158,12 +162,12 @@ class SpyGenerator
 		if (!($tag instanceof Var_)) {
 			return;
 		}
-		// empty check to make Psalm happy
 		$typeName = $tag->getType();
+		// empty check to make Psalm happy
 		if (!$typeName) {
 			return;
 		}
 		$method->setComment('@psalm-suppress MixedReturnTypeCoercion')
-			->addComment('@return ' .	$typeName);
+			->addComment('@return ' . $typeName);
 	}
 }

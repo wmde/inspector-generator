@@ -7,7 +7,9 @@ namespace Wmde\SpyGenerator\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 use Wmde\SpyGenerator\CodeWriter;
 use Wmde\SpyGenerator\Psr4CodeWriter;
+use Wmde\SpyGenerator\SpyClassResult;
 use Wmde\SpyGenerator\SpyGenerator;
+use Wmde\SpyGenerator\Tests\Classes\NullableOrder;
 use Wmde\SpyGenerator\Tests\Classes\Order;
 use Wmde\SpyGenerator\Tests\Classes\SpecialOrder;
 
@@ -19,14 +21,9 @@ class SpyGeneratorTest extends TestCase
 	public function test_it_generates_class(): void
 	{
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
-		$writer = $this->makeWriter();
-		$result = $generator->generateSpy(Order::class, 'OrderSpy');
 
-		$fileName = $writer->writeResult($result);
-		/**
-		 * @psalm-suppress UnresolvableInclude
-		 */
-		require $fileName;
+		$result = $generator->generateSpy(Order::class, 'OrderSpy');
+		$this->loadClassCode($result);
 
 		$this->assertSame('Wmde\SpyGenerator\Tests\Generated\OrderSpy', $result->fullyQualifiedClassName);
 		$this->assertTrue(class_exists('\Wmde\SpyGenerator\Tests\Generated\OrderSpy', false));
@@ -48,13 +45,19 @@ class SpyGeneratorTest extends TestCase
 		$this->assertNotNull($spyClass->getPrevious());
 	}
 
-	/**
-	 * @depends test_it_generates_class
-	 */
 	public function test_generated_class_provides_access_to_nullable_properties(): void
-    {
-		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\OrderSpy($this->newSingularOrderFixture());
+	{
+		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
 
+		$result = $generator->generateSpy(NullableOrder::class, 'NullableOrderSpy');
+		$this->loadClassCode($result);
+
+		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\NullableOrderSpy($this->newNullableOrderFixture());
+
+		$this->assertNull($spyClass->getFulfilled());
+		$this->assertNull($spyClass->getAmount());
+		$this->assertNull($spyClass->getComment());
+		$this->assertNull($spyClass->getRebate());
 		$this->assertNull($spyClass->getPrevious());
 	}
 
@@ -62,12 +65,7 @@ class SpyGeneratorTest extends TestCase
     {
 		$generator = new SpyGenerator('Wmde\SpyGenerator\Tests\Generated');
 		$result = $generator->generateSpy(SpecialOrder::class, 'SpecialOrderSpy');
-		$writer = $this->makeWriter();
-		$fileName = $writer->writeResult($result);
-		/**
-		 * @psalm-suppress UnresolvableInclude
-		 */
-		require $fileName;
+		$this->loadClassCode($result);
 
 		$spyClass = new \Wmde\SpyGenerator\Tests\Generated\SpecialOrderSpy($this->newSpecialOrderFixture());
 
@@ -84,9 +82,9 @@ class SpyGeneratorTest extends TestCase
 		return $order;
 	}
 
-	private function newSingularOrderFixture(): Order
+	private function newNullableOrderFixture(): NullableOrder
     {
-		return new Order('2');
+		return new NullableOrder('2');
 	}
 
 	private function newSpecialOrderFixture(): SpecialOrder
@@ -96,10 +94,15 @@ class SpyGeneratorTest extends TestCase
 		return $order;
 	}
 
-	private function makeWriter(): CodeWriter
+	private function loadClassCode(SpyClassResult $result): void
     {
-		return new Psr4CodeWriter([
+        $writer = new Psr4CodeWriter([
 			'Wmde\SpyGenerator\Tests\\' => __DIR__ . '/../'
 		]);
+		$fileName = $writer->writeResult($result);
+		/**
+		 * @psalm-suppress UnresolvableInclude
+		 */
+		require $fileName;
 	}
 }
