@@ -17,9 +17,9 @@ class Order implements OrderInterface
 	 * @var string[]
 	 */
 	protected array $items;
-	protected string $comment;
 	protected ?Order $previous = null;
 	protected float $rebate;
+	private string $comment;
 
 	public function __construct(
 		protected string $id

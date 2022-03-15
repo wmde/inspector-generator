@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wmde\SpyGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use Wmde\SpyGenerator\CodeWriter;
 use Wmde\SpyGenerator\Psr4CodeWriter;
 use Wmde\SpyGenerator\SpyClassResult;
@@ -71,6 +72,11 @@ class SpyGeneratorTest extends TestCase
 
 		$this->assertSame('Lots and lots of love', $spyClass->getSpecialSauce());
 		$this->assertSame('99', $spyClass->getId());
+		$reflectedSpy = new ReflectionClass($spyClass);
+		$this->assertFalse(
+			$reflectedSpy->hasMethod('getComment'),
+			'Spy class must not contain accessors for private of parent class'
+		);
 	}
 
 	private function newOrderFixture(): Order
