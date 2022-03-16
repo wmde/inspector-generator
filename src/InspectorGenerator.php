@@ -138,7 +138,7 @@ class InspectorGenerator
 		}
 
 		if ($propertyType->allowsNull()) {
-			$typeAssertion = "is_null(\$value) || $typeAssertion";
+			$typeAssertion = "\$value === null || $typeAssertion";
 		}
 
 		return [ $returnType, $typeAssertion ];
