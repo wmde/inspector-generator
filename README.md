@@ -32,8 +32,8 @@ $generator = new WMDE\InspectorGenerator\InspectorGenerator('App\Tests\Inspector
 $writer = new WMDE\InspectorGenerator\Psr4Writer(['App\Tests\\' => __DIR__]);
 
 // Create inspectors for your classes
-$writer->writeResult($generator->generate('App\Foo\SomeObject', 'SomeObjectInspector'));
-$writer->writeResult($generator->generate('App\Bar\OtherObject', 'OtherObjectPeeker'));
+$writer->writeResult($generator->generateInspector('App\Foo\SomeObject', 'SomeObjectInspector'));
+$writer->writeResult($generator->generateInspector('App\Bar\OtherObject', 'OtherObjectPeeker'));
 // ... etc
 
 ```
