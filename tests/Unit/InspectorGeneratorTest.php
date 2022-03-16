@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Wmde\InspectorGenerator\Tests\Unit;
+namespace WMDE\InspectorGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Wmde\InspectorGenerator\Psr4CodeWriter;
-use Wmde\InspectorGenerator\GeneratedInspectorResult;
-use Wmde\InspectorGenerator\InspectorGenerator;
-use Wmde\InspectorGenerator\Tests\ExampleClasses\NullableOrder;
-use Wmde\InspectorGenerator\Tests\ExampleClasses\Order;
-use Wmde\InspectorGenerator\Tests\ExampleClasses\SpecialOrder;
+use WMDE\InspectorGenerator\Psr4CodeWriter;
+use WMDE\InspectorGenerator\GeneratedInspectorResult;
+use WMDE\InspectorGenerator\InspectorGenerator;
+use WMDE\InspectorGenerator\Tests\ExampleClasses\NullableOrder;
+use WMDE\InspectorGenerator\Tests\ExampleClasses\Order;
+use WMDE\InspectorGenerator\Tests\ExampleClasses\SpecialOrder;
 
 /**
- * @covers \Wmde\InspectorGenerator\InspectorGenerator
+ * @covers \WMDE\InspectorGenerator\InspectorGenerator
  */
 class InspectorGeneratorTest extends TestCase
 {
 	public function test_it_generates_class(): void
 	{
-		$generator = new InspectorGenerator('Wmde\InspectorGenerator\Tests\Generated');
+		$generator = new InspectorGenerator('WMDE\InspectorGenerator\Tests\Generated');
 
 		$result = $generator->generateInspector(Order::class, 'OrderInspector');
 		$this->loadClassCode($result);
 
-		$this->assertSame('Wmde\InspectorGenerator\Tests\Generated\OrderInspector', $result->fullyQualifiedClassName);
-		$this->assertTrue(class_exists('\Wmde\InspectorGenerator\Tests\Generated\OrderInspector', false));
+		$this->assertSame('WMDE\InspectorGenerator\Tests\Generated\OrderInspector', $result->fullyQualifiedClassName);
+		$this->assertTrue(class_exists('\WMDE\InspectorGenerator\Tests\Generated\OrderInspector', false));
 	}
 
 
@@ -35,7 +35,7 @@ class InspectorGeneratorTest extends TestCase
 	 */
 	public function test_generated_class_provides_access_to_properties(): void
     {
-		$inspectorClass = new \Wmde\InspectorGenerator\Tests\Generated\OrderInspector($this->newOrderFixture());
+		$inspectorClass = new \WMDE\InspectorGenerator\Tests\Generated\OrderInspector($this->newOrderFixture());
 
 		$this->assertTrue($inspectorClass->getFulfilled());
 		$this->assertSame(1000, $inspectorClass->getAmount());
@@ -48,11 +48,11 @@ class InspectorGeneratorTest extends TestCase
 
 	public function test_generated_class_provides_access_to_nullable_properties(): void
 	{
-		$generator = new InspectorGenerator('Wmde\InspectorGenerator\Tests\Generated');
+		$generator = new InspectorGenerator('WMDE\InspectorGenerator\Tests\Generated');
 		$result = $generator->generateInspector(NullableOrder::class, 'NullableOrderInspector');
 		$this->loadClassCode($result);
 
-		$inspectorClass = new \Wmde\InspectorGenerator\Tests\Generated\NullableOrderInspector(
+		$inspectorClass = new \WMDE\InspectorGenerator\Tests\Generated\NullableOrderInspector(
 			$this->newNullableOrderFixture()
 		);
 
@@ -65,11 +65,11 @@ class InspectorGeneratorTest extends TestCase
 
 	public function test_generated_class_provides_access_to_inherited_properties(): void
     {
-		$generator = new InspectorGenerator('Wmde\InspectorGenerator\Tests\Generated');
+		$generator = new InspectorGenerator('WMDE\InspectorGenerator\Tests\Generated');
 		$result = $generator->generateInspector(SpecialOrder::class, 'SpecialOrderInspector');
 		$this->loadClassCode($result);
 
-		$inspectorClass = new \Wmde\InspectorGenerator\Tests\Generated\SpecialOrderInspector(
+		$inspectorClass = new \WMDE\InspectorGenerator\Tests\Generated\SpecialOrderInspector(
 			$this->newSpecialOrderFixture()
 		);
 
@@ -106,7 +106,7 @@ class InspectorGeneratorTest extends TestCase
 	private function loadClassCode(GeneratedInspectorResult $result): void
     {
         $writer = new Psr4CodeWriter([
-			'Wmde\InspectorGenerator\Tests\\' => __DIR__ . '/../'
+			'WMDE\InspectorGenerator\Tests\\' => __DIR__ . '/../'
 		]);
 		$fileName = $writer->writeResult($result);
 		/**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\InspectorGenerator\Tests\ExampleClasses;
+namespace WMDE\InspectorGenerator\Tests\ExampleClasses;
 
 /**
  * This is an example class with all-nullable properties.

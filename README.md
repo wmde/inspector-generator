@@ -28,8 +28,8 @@ like this:
 
 ```php
 
-$generator = new Wmde\InspectorGenerator\InspectorGenerator('App\Tests\Inspectors');
-$writer = new Wmde\InspectorGenerator\Psr4Writer(['App\Tests\\' => __DIR__]);
+$generator = new WMDE\InspectorGenerator\InspectorGenerator('App\Tests\Inspectors');
+$writer = new WMDE\InspectorGenerator\Psr4Writer(['App\Tests\\' => __DIR__]);
 
 // Create inspectors for your classes
 $writer->writeResult($generator->generate('App\Foo\SomeObject', 'SomeObjectInspector'));

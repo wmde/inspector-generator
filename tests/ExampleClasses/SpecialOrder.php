@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\InspectorGenerator\Tests\ExampleClasses;
+namespace WMDE\InspectorGenerator\Tests\ExampleClasses;
 
 class SpecialOrder extends Order
 {

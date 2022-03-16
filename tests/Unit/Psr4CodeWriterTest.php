@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Wmde\InspectorGenerator\Tests\Unit;
+namespace WMDE\InspectorGenerator\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Wmde\InspectorGenerator\Psr4CodeWriter;
-use Wmde\InspectorGenerator\GeneratedInspectorResult;
+use WMDE\InspectorGenerator\Psr4CodeWriter;
+use WMDE\InspectorGenerator\GeneratedInspectorResult;
 
 /**
- * @covers \Wmde\InspectorGenerator\Psr4CodeWriter
+ * @covers \WMDE\InspectorGenerator\Psr4CodeWriter
  */
 class Psr4CodeWriterTest extends TestCase
 {

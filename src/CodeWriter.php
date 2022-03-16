@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wmde\InspectorGenerator;
+namespace WMDE\InspectorGenerator;
 
 interface CodeWriter
 {

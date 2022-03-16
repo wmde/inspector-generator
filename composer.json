@@ -9,12 +9,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Wmde\\InspectorGenerator\\": "src/"
+            "WMDE\\InspectorGenerator\\": "src/"
         }
     },
 	"autoload-dev": {
         "psr-4": {
-            "Wmde\\InspectorGenerator\\Tests\\": "tests/"
+            "WMDE\\InspectorGenerator\\Tests\\": "tests/"
         }
     },
     "authors": [
